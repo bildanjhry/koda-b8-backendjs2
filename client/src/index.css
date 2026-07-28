@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --text:#1e1e1ee4;
+  --text-light:#f6f6f6;
+  --base:#efede3;
+  --primary:#302f2c;
+  --gray:#4d4d4d;
+  --light:#f3f2f2;
+  --orange:#f25623;
+}
+
+h1 {
+  @apply text-6xl font-semibold
+}
+h2 {
+  @apply text-5xl font-semibold
+}
+h3 {
+  @apply text-4xl font-semibold
+}
+h4 {
+  @apply text-3xl font-semibold
+}
+h5 {
+  @apply text-2xl font-semibold
+}
+h6 {
+  @apply text-lg font-semibold
+}
+
+body {
+  @apply w-screen flex flex-col items-center
+}
+
+.cent-content {
+  @apply flex justify-center items-center
+}
+
+.bet-content {
+  @apply flex justify-between items-center
+}

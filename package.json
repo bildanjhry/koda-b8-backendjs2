@@ -1,0 +1,23 @@
+{
+  "name": "Pulse",
+  "version": "1.0.0",
+  "description": "A Notes App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:server":"node --watch ./server/index.js",
+    "dev:client":"npm run dev -w client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bildanjhry/koda-b8-backendjs2.git"
+  },
+  "keywords": [],
+  "author": "space-ranger",
+  "license": "ISC",
+  "workspaces":["client","server"],
+  "bugs": {
+    "url": "https://github.com/bildanjhry/koda-b8-backendjs2/issues"
+  },
+  "homepage": "https://github.com/bildanjhry/koda-b8-backendjs2#readme"
+}

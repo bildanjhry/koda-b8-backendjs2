@@ -1,5 +1,5 @@
 import { constants } from "http2"
-import { addNote } from "../models/notes_models"
+import { addNote, deleteNote } from "../models/notes_models.js"
 
 /**
  * 
@@ -7,25 +7,45 @@ import { addNote } from "../models/notes_models"
  * @param {import("express").Response} res 
  * @returns 
  */
-export function CreateNote(req, res){
+export function CreateNote(req, res) {
     const id = req.params.id
-    const {title, plan} = req.body
+    const { title, pin, plan } = req.body
 
     const response = addNote(id, {
-        title:title,
-        plan:plan
+        title: title,
+        pin:parseInt(pin),
+        plan: plan
     })
 
-    if(!response.success){
+    if (!response.success) {
         res.status(constants.HTTP_STATUS_BAD_REQUEST).json({
-            success:false,
-            message:response.message
+            success: false,
+            message: response.message
         })
         return
     }
     res.status(constants.HTTP_STATUS_OK).json({
-        success:true,
-        message:response.message,
-        results:response.result
+        success: true,
+        message: response.message,
+        results: response.result
+    })
+}
+
+export function DeleteNote(req, res) {
+    const id_user = req.params.idUser
+    const id = req.params.id
+    console.log(id_user+" - "+id)
+    const response = deleteNote(id_user, id)
+    if (!response.success) {
+        res.status(constants.HTTP_STATUS_BAD_REQUEST).json({
+            success: false,
+            message: response.message
+        })
+        return
+    }
+    res.status(constants.HTTP_STATUS_OK).json({
+        success: true,
+        message: response.message,
+        results: response.result
     })
 }

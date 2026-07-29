@@ -41,11 +41,12 @@ export default function Dashboard() {
 		getData()
 	}, [refresh, setRefresh])
 
-
 	async function handleSubmit(e) {
 		e.preventDefault()
 		const data = new FormData(e.target)
-		data.append("pin", notePin)
+		if(notePin){
+			data.append("pin", notePin)
+		}
 		if(dataNote.id) data.append("id", dataNote.id)
 		const formated = new URLSearchParams(data)
 		const res = await api(`http://localhost:8080/notes/${id}`, "POST", formated.toString())
@@ -58,6 +59,7 @@ export default function Dashboard() {
 	}
 
 	function handleChooseCard(item) {
+		setNotePin(item.pin)
 		setDataNote({id:item.id, title: item.title, plan: item.plan, pin: item.pin })
 		setShowPop(true)
 	}

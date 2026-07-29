@@ -13,11 +13,13 @@ export function addNote(id, data) {
 		formated = JSON.parse(file)
 		const user = formated.filter((item) => item.id === parseInt(id))
 		let user_noteTemp = user[0].notes.filter((item) => item.id === parseInt(data.id))
+		console.log(user_noteTemp)
 		if (user_noteTemp.length > 0) {
 			const idx = user[0].notes.findIndex((item) => item.id === parseInt(data.id))
+			user_noteTemp = user[0].notes
 			user_noteTemp.splice(idx, 1, {
 				id: parseInt(data.id),
-				id_user: id,
+				id_user: parseInt(id),
 				title: data.title,
 				plan: data.plan,
 				pin: data.pin,
@@ -27,7 +29,7 @@ export function addNote(id, data) {
 		} else {
 			user_noteTemp = [...user[0].notes, {
 				id: user[0].notes.length + 1,
-				id_user: id,
+				id_user: parseInt(id),
 				title: data.title,
 				plan: data.plan,
 				pin: data.pin,

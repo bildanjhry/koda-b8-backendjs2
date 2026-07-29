@@ -27,7 +27,7 @@ export default function ModalNotes({ handleSubmit, dataNote, setNotePin, handleD
 						type="button"
 						onClick={() => {
 							setPin(prev => !prev)
-							setNotePin(prev => ~prev*~prev)
+							setNotePin(prev => prev === 1 ? prev = 0 : prev = 1 )
 						}}
 						className={`absolute ${pin ? 'bg-(--primary)' : 'bg-(--base)'} cent-content 
 						shadow-md h-9 w-9 cursor-pointer rounded-full right-12`}

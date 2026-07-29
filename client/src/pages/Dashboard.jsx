@@ -2,10 +2,60 @@ import { CiSearch } from "react-icons/ci";
 import { LuCalendarClock } from "react-icons/lu";
 import { FaRegStickyNote } from "react-icons/fa";
 import { IoMdLogOut } from "react-icons/io";
+import { useEffect, useState } from "react";
+import { IoClose } from "react-icons/io5";
+
+import { api, apiGET } from "../libs/fetch/fetch";
+
+import ModalNotes from "../components/ModalNotes.jsx";
 
 export default function Dashboard() {
+	const [data, setData] = useState([])
+	const [notes, setNotes] = useState([])
+	const [showPop, setShowPop] = useState(false)
+	const [refresh, setRefresh] = useState(false)
+	const [dataNote, setDataNote] = useState({
+		title:"",
+		plan:""
+	})
+	const id = JSON.parse(window.localStorage.getItem("session")).id || ''
+
+	useEffect(() => {
+		async function getData() {
+			const res = await apiGET(`http://localhost:8080/users/${id}`)
+			if (res.success) {
+				setData(res.results)
+				console.log(res.results[0]?.notes)
+				setNotes(res.results[0].notes)
+				if(refresh) setRefresh(false)
+			}
+		}
+		getData()
+	}, [refresh, setRefresh])
+
+
+	async function handleSubmit(e){
+		e.preventDefault()
+		const data = new FormData(e.target)
+		const formated = new URLSearchParams(data)
+		const res = await api(`http://localhost:8080/notes/${id}`, "POST", formated.toString())
+		if(res.success){
+			setRefresh(true)
+			setShowPop(false)
+		}
+	}
+
+	function handleChooseCard(item){
+		setDataNote({title:item.title, plan:item.plan})
+		setShowPop(true)
+	}
+
 	return (
 		<div className="w-screen flex relative overflow-x-hidden ">
+			{showPop &&
+				<ModalNotes handleSubmit={handleSubmit} dataNote={dataNote} setShowPop={setShowPop}/>
+			}
+
 			<aside className="w-[10%] flex flex-col fixed z-index-15 left-0 border-r 
       h-screen border-(--base)">
 				<header className="h-20 w-full border-b border-(--base) cent-content">
@@ -13,8 +63,10 @@ export default function Dashboard() {
 						<p className="text-3xl font-black"><span className="">p</span>ulse.</p>
 					</div>
 				</header>
-				<div className=" flex pt-10 flex-1 items-center flex-col">
-					<button className="w-20 gap-2 text-(--gray)/60 h-20 border-2 cent-content 
+				<div className="flex pt-10 flex-1 items-center flex-col">
+					<button 
+					onClick={() => setShowPop((prev) => !prev)}
+					className="w-20 gap-2 text-(--gray)/60 h-20 border-2 cent-content 
             cursor-pointer flex-col rounded-md border-dashed border-(--gray)/40 ">
 						<FaRegStickyNote />
 						<p className="text-sm">Add</p>
@@ -48,102 +100,33 @@ export default function Dashboard() {
 
 				<main className="flex flex-col mt-25 px-10 pl-12 pb-10 w-full z-1">
 					<h5 className="mb-6">All Notes</h5>
-					<div className="pb-10 grid grid-cols-4 gap-6">
-						<div className="h-100 bg-(--gray) text-(--light) shadow-[0px_4px_18px_-13px_rgba(0,0,0,0.1)] rounded-xl px-4">
-							<header className="bet-content h-[15%] w-full border-b border-(--gray)/20">
-								<h6>Coding</h6>
-								<div className="bet-content gap-2">
-									<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
-									<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
-									<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
-								</div>
-							</header>
-							<main className="h-[70%] py-3">
-								<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
-									Quia nobis consectetur nostrum error perferendis placeat, quod id possimus iusto aliquid.</p>
-							</main>
-							<footer className="h-[15%] bet-content border-t border-(--gray)/20 ">
-								<div className="w-fit gap-2 bet-content">
-									<LuCalendarClock />
-									<p>20:00</p>
-								</div>
-							</footer>
-						</div>
-						<div className="h-100 bg-(--light) shadow-[0px_4px_18px_-13px_rgba(0,0,0,0.1)] rounded-xl px-4">
-							<header className="bet-content h-[15%] w-full border-b border-(--gray)/20">
-								<h6>Coding</h6>
-								<div className="bet-content gap-2">
-									<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
-									<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
-									<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
-								</div>
-							</header>
-							<main className="h-[70%] py-3">
-								<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia nobis 
-									consectetur nostrum error perferendis placeat, quod id possimus iusto aliquid.</p>
-							</main>
-							<footer className="h-[15%] bet-content border-t border-(--gray)/20 ">
-								<div className="w-fit gap-2 bet-content">
-									<LuCalendarClock />
-									<p>20:00</p>
-								</div>
-							</footer>
-						</div>
-						<div className="h-100 bg-(--light) shadow-[0px_4px_18px_-13px_rgba(0,0,0,0.1)] rounded-xl px-4">
-							<header className="bet-content h-[15%] w-full border-b border-(--gray)/20">
-								<h6>Coding</h6>
-								<div className="bet-content gap-2">
-									<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
-									<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
-									<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
-								</div>
-							</header>
-							<main className="h-[70%] py-3">
-								<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia nobis consectetur 
-									nostrum error perferendis placeat, quod id possimus iusto aliquid.</p>
-							</main>
-							<footer className="h-[15%] bet-content border-t border-(--gray)/20 ">
-								<div className="w-fit gap-2 bet-content">
-									<LuCalendarClock />
-									<p>20:00</p>
-								</div>
-							</footer>
-						</div>
-						<div className="h-100 bg-(--light) shadow-[0px_4px_18px_-13px_rgba(0,0,0,0.1)] rounded-xl px-4">
-							<header className="bet-content h-[15%] w-full border-b border-(--gray)/20">
-								<h6>Coding</h6>
-								<div className="bet-content gap-2">
-									<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
-									<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
-									<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
-								</div>
-							</header>
-							<main className="h-[70%] py-3">
-								<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia nobis consectetur 
-									nostrum error perferendis placeat, quod id possimus iusto aliquid.</p>
-							</main>
-							<footer className="h-[15%] bet-content border-t border-(--gray)/20 ">
-								<div className="w-fit gap-2 bet-content">
-									<LuCalendarClock />
-									<p>20:00</p>
-								</div>
-							</footer>
-						</div>
-						<div className="h-100 bg-(--light) shadow-[0px_4px_18px_-13px_rgba(0,0,0,0.1)] rounded-xl px-4">
-							<header className="bet-content h-[15%] w-full border-b border-(--gray)/20">
-								<h6>Coding</h6>
-							</header>
-							<main className="h-[70%] py-3">
-								<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia nobis consectetur nostrum 
-									error perferendis placeat, quod id possimus iusto aliquid.</p>
-							</main>
-							<footer className="h-[15%] bet-content border-t border-(--gray)/20 ">
-								<div className="w-fit gap-2 bet-content">
-									<LuCalendarClock />
-									<p>20:00</p>
-								</div>
-							</footer>
-						</div>
+					<div className="pb-10 grid grid-cols-4 gap-6 flex-row-reverse">
+						{notes?.map((item) => (
+							<div 
+							key={item.id}
+							onClick={() => {handleChooseCard(item)}}
+							className="h-100 bg-(--light) shadow-[0px_4px_18px_-13px_rgba(0,0,0,0.1)] 
+							cursor-pointer hover:bg-(--gray)/20 rounded-xl px-4">
+								<header className="bet-content h-[15%] w-full border-b border-(--gray)/20">
+									<h6>{item.title.substring(0,20)}</h6>
+									<div className="bet-content gap-2">
+										<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
+										<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
+										<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
+									</div>
+								</header>
+								<main className="h-[70%] py-3">
+									<p>{item.plan.substring(0,310)}</p>
+								</main>
+								<footer className="h-[15%] bet-content border-t border-(--gray)/20 ">
+									<div className="w-fit gap-2 bet-content">
+										<LuCalendarClock />
+										<p>{item.updated_at.split(",")[1]}</p>
+									</div>
+								</footer>
+							</div>
+
+						))}
 					</div>
 				</main>
 			</main>

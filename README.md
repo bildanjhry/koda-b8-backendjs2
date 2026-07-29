@@ -23,3 +23,6 @@ Program Management notes berbasis web dimana user dapat menyimpan, mengedit dan 
 | POST | /login |
 | POST | /notes/:id |
 | DELETE | /notes/:idUser/:id |
+
+### Previews :
+![alt text](demo.gif)

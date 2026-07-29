@@ -46,6 +46,7 @@ export default function Dashboard() {
 		e.preventDefault()
 		const data = new FormData(e.target)
 		data.append("pin", notePin)
+		if(dataNote.id) data.append("id", dataNote.id)
 		const formated = new URLSearchParams(data)
 		const res = await api(`http://localhost:8080/notes/${id}`, "POST", formated.toString())
 		if (res.success) {

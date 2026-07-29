@@ -8,10 +8,11 @@ import { addNote, deleteNote } from "../models/notes_models.js"
  * @returns 
  */
 export function CreateNote(req, res) {
-    const id = req.params.id
-    const { title, pin, plan } = req.body
+    const idUser = req.params.id
+    const { id, title, pin, plan } = req.body
 
-    const response = addNote(id, {
+    const response = addNote(idUser, {
+        id :id,
         title: title,
         pin:parseInt(pin),
         plan: plan

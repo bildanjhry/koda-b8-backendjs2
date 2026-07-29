@@ -8,9 +8,7 @@ export function findUserDetail(id) {
         }
         const file = fs.readFileSync("./server/src/models/users.json", 'utf-8')
         formated = JSON.parse(file)
-        console.log(id)
         let found = formated.filter((item) => item.id === parseInt(id))
-        console.log(formated)
 
         if (found.length < 1) {
             throw new Error("User not found")

@@ -4,8 +4,9 @@ import { FaRegStickyNote } from "react-icons/fa";
 import { IoMdLogOut } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
+import { useNavigate } from "react-router";
 
-import { api, apiGET } from "../libs/fetch/fetch";
+import { api, apiGET, apiDELETE } from "../libs/fetch/fetch";
 
 import ModalNotes from "../components/ModalNotes.jsx";
 
@@ -14,46 +15,70 @@ export default function Dashboard() {
 	const [notes, setNotes] = useState([])
 	const [showPop, setShowPop] = useState(false)
 	const [refresh, setRefresh] = useState(false)
+	const [notePin, setNotePin] = useState(0)
 	const [dataNote, setDataNote] = useState({
-		title:"",
-		plan:""
+		title: "",
+		plan: ""
 	})
 	const id = JSON.parse(window.localStorage.getItem("session")).id || ''
+	const navigate = useNavigate()
+	useEffect(() => {
+		if(!id){
+			navigate("/login")
+		}
+	},[id])
 
 	useEffect(() => {
 		async function getData() {
 			const res = await apiGET(`http://localhost:8080/users/${id}`)
 			if (res.success) {
 				setData(res.results)
-				console.log(res.results[0]?.notes)
 				setNotes(res.results[0].notes)
-				if(refresh) setRefresh(false)
+				if (refresh) setRefresh(false)
 			}
 		}
 		getData()
 	}, [refresh, setRefresh])
 
 
-	async function handleSubmit(e){
+	async function handleSubmit(e) {
 		e.preventDefault()
 		const data = new FormData(e.target)
+		data.append("pin", notePin)
 		const formated = new URLSearchParams(data)
 		const res = await api(`http://localhost:8080/notes/${id}`, "POST", formated.toString())
-		if(res.success){
+		if (res.success) {
 			setRefresh(true)
 			setShowPop(false)
+			setDataNote({})
+			setNotePin(0)
 		}
 	}
 
-	function handleChooseCard(item){
-		setDataNote({title:item.title, plan:item.plan})
+	function handleChooseCard(item) {
+		setDataNote({id:item.id, title: item.title, plan: item.plan, pin: item.pin })
 		setShowPop(true)
+	}
+
+	async function handleDelete(){
+		const res = await apiDELETE(`http://localhost:8080/notes/${id}/${dataNote.id}`,"DELETE")
+		if(res.success){
+			setRefresh(true)
+			setShowPop(false)
+			setDataNote({})
+		}
 	}
 
 	return (
 		<div className="w-screen flex relative overflow-x-hidden ">
 			{showPop &&
-				<ModalNotes handleSubmit={handleSubmit} dataNote={dataNote} setShowPop={setShowPop}/>
+				<ModalNotes 
+				handleSubmit={handleSubmit} 
+				dataNote={dataNote}
+				setNotePin={setNotePin} 
+				setShowPop={setShowPop} 
+				handleDelete={handleDelete}
+				/>
 			}
 
 			<aside className="w-[10%] flex flex-col fixed z-index-15 left-0 border-r 
@@ -64,14 +89,26 @@ export default function Dashboard() {
 					</div>
 				</header>
 				<div className="flex pt-10 flex-1 items-center flex-col">
-					<button 
-					onClick={() => setShowPop((prev) => !prev)}
-					className="w-20 gap-2 text-(--gray)/60 h-20 border-2 cent-content 
+					<button
+						onClick={() => {
+							setShowPop((prev) => !prev)
+							setDataNote({
+								title: "",
+								plan: ""
+							})
+						}}
+						className="w-20 gap-2 text-(--gray)/60 h-20 border-2 cent-content 
             cursor-pointer flex-col rounded-md border-dashed border-(--gray)/40 ">
 						<FaRegStickyNote />
 						<p className="text-sm">Add</p>
 					</button>
-					<button className="cursor-pointer mt-auto w-full px-9 pb-10 bet-content 
+					<button 
+					type="button"
+					onClick={() => {
+						window.localStorage.removeItem("session")
+						navigate("/login")
+					}}
+					className="cursor-pointer mt-auto w-full px-9 pb-10 bet-content 
           text-(--gray)/80 gap-1">
 						<IoMdLogOut />
 						<p>Log out</p>
@@ -102,13 +139,14 @@ export default function Dashboard() {
 					<h5 className="mb-6">All Notes</h5>
 					<div className="pb-10 grid grid-cols-4 gap-6 flex-row-reverse">
 						{notes?.map((item) => (
-							<div 
-							key={item.id}
-							onClick={() => {handleChooseCard(item)}}
-							className="h-100 bg-(--light) shadow-[0px_4px_18px_-13px_rgba(0,0,0,0.1)] 
-							cursor-pointer hover:bg-(--gray)/20 rounded-xl px-4">
-								<header className="bet-content h-[15%] w-full border-b border-(--gray)/20">
-									<h6>{item.title.substring(0,20)}</h6>
+							<div
+								key={item.id}
+								onClick={() => { handleChooseCard(item) }}
+								className={`h-100 ${item.pin ? 'bg-(--primary) text-(--light) hover:bg-(--primary)/90' : 'bg-(--light) hover:bg-(--gray)/20'} 
+								shadow-[0px_4px_18px_-13px_rgba(0,0,0,0.1)] 
+							cursor-pointer  rounded-xl px-4`}>
+								<header className={`bet-content h-[15%] w-full border-b ${item.pin ? 'border-(--light)/40' : 'border-(--gray)/20'}`}>
+									<h6>{item.title.substring(0, 20)}</h6>
 									<div className="bet-content gap-2">
 										<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
 										<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
@@ -116,7 +154,7 @@ export default function Dashboard() {
 									</div>
 								</header>
 								<main className="h-[70%] py-3">
-									<p>{item.plan.substring(0,310)}</p>
+									<p>{item.plan.substring(0, 310)}</p>
 								</main>
 								<footer className="h-[15%] bet-content border-t border-(--gray)/20 ">
 									<div className="w-fit gap-2 bet-content">

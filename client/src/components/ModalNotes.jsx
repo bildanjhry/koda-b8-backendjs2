@@ -1,7 +1,14 @@
 import { IoClose } from "react-icons/io5";
 import { AiOutlineDelete } from "react-icons/ai";
+import { LuPin } from "react-icons/lu";
+import { VscSaveAs } from "react-icons/vsc";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
-export default function ModalNotes({handleSubmit, dataNote, setShowPop}) {
+import { useState } from "react";
+
+export default function ModalNotes({ handleSubmit, dataNote, setNotePin, handleDelete, setShowPop }) {
+	const [pin, setPin] = useState(dataNote?.pin || 0)
+
 	return (
 		<div className="h-screen w-screen bg-(--base)/60 cent-content z-100 fixed">
 			<div className="w-145 bg-white rounded-xl h-120 shadow-md p-7">
@@ -9,9 +16,29 @@ export default function ModalNotes({handleSubmit, dataNote, setShowPop}) {
 					onSubmit={handleSubmit}
 					action="" className="w-full h-full flex flex-col gap-4 relative">
 					<button
+						type="button"
+						onClick={handleDelete}
+						className={`absolute bg-(--base) cent-content 
+						shadow-md h-9 w-9 cursor-pointer rounded-full right-24`}
+					>
+						<RiDeleteBin6Line/>
+					</button>
+					<button
+						type="button"
+						onClick={() => {
+							setPin(prev => !prev)
+							setNotePin(prev => ~prev*~prev)
+						}}
+						className={`absolute ${pin ? 'bg-(--primary)' : 'bg-(--base)'} cent-content 
+						shadow-md h-9 w-9 cursor-pointer rounded-full right-12`}
+					>
+						<LuPin className={`${pin && 'text-(--light)'}`} />
+					</button>
+					<button
+						type="button"
 						onClick={() => setShowPop((prev) => !prev)}
 						className="absolute cent-content bg-(--orange)
-            text-(--light) shadow-md rounded-full h-6 w-6 right-0 cursor-pointer">
+            text-(--light) shadow-md rounded-full h-9 w-9 right-0  cursor-pointer">
 						<IoClose />
 					</button>
 					<input
@@ -26,17 +53,10 @@ export default function ModalNotes({handleSubmit, dataNote, setShowPop}) {
 						name="plan" id="plan" className="w-full outline-none" rows={11} cols="20"></textarea>
 					<div className="flex w-full items-center justify-end gap-3">
 						<button
-							title="Delete"
-							className="bg-red-600 w-10 rounded-md cursor-pointer 
-							mt-5 h-10 cent-content text-(--light)"
-							type="button">
-							<AiOutlineDelete/>
-						</button>	
-						<button
-							className="bg-(--primary) w-20 rounded-md cursor-pointer 
-							mt-5 h-10 cent-content text-(--light)"
+							className="bg-(--primary) w-15 rounded-full cursor-pointer 
+							mt-5 h-15 cent-content shadow-md text-(--light)"
 							type="submit">
-							Save
+							<VscSaveAs />
 						</button>
 
 					</div>

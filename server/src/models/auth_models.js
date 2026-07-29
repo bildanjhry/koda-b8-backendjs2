@@ -51,6 +51,7 @@ export function findUser(data) {
 		return {
 			success: true, message: "Success Login", result: {
 				id: user[0].id,
+				name:user[0].name,
 				token:"Allow"
 			}
 		}

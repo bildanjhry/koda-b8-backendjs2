@@ -21,6 +21,7 @@ export default function Dashboard() {
 		plan: ""
 	})
 	const id = JSON.parse(window.localStorage.getItem("session")).id || ''
+	const username = JSON.parse(window.localStorage.getItem("session")).name || ''
 	const navigate = useNavigate()
 	useEffect(() => {
 		if(!id){
@@ -131,13 +132,13 @@ export default function Dashboard() {
 					<div className="bet-content gap-3">
 						<div className="w-10 bg-(--base) h-10 rounded-full">
 						</div>
-						<p>My name</p>
+						<p>{username.split(" ")[0]}</p>
 					</div>
 				</header>
 
-				<main className="flex flex-col mt-25 px-10 pl-12 pb-10 w-full z-1">
+				<main className="flex flex-col mt-25 px-10 pb-10 w-full z-1">
 					<h5 className="mb-6">All Notes</h5>
-					<div className="pb-10 grid grid-cols-4 gap-6 flex-row-reverse">
+					<div className="pb-1 grid grid-cols-4 gap-6 overflow-x-hidden">
 						{notes?.map((item) => (
 							<div
 								key={item.id}

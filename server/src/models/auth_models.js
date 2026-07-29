@@ -44,12 +44,13 @@ export function findUser(data) {
 		}
 		const file = fs.readFileSync("./server/src/models/users.json", 'utf-8')
 		formated = JSON.parse(file)
-		if (formated.find((item) => item.email === data.email && item.email === data.password)) {
+		const user = formated.filter((item) => item.email === data.email && item.password === data.password)
+		if (!user) {
 			throw new Error("Email or password wrong")
 		}
 		return {
 			success: true, message: "Success Login", result: {
-				id: formated.length,
+				id: user[0].id,
 				token:"Allow"
 			}
 		}

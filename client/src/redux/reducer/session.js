@@ -8,7 +8,7 @@ const initialState = {
 const session = createSlice({
     name:"session",
     initialState,
-    reducer:{
+    reducers:{
         userLogin:function(state, action){
             state.id = action.payload.id
             state.token = action.payload.token

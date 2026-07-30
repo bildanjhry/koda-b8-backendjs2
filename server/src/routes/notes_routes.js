@@ -28,14 +28,12 @@ notesRoutes.use(authMiddleware)
  *               id:
  *                 description: Optional for "PUT" data note
  *                 type: integer
- *               Pin:
+ *               pin:
  *                 description: Only accept 0 and 1 (false | true)
  *                 type: integer
- *                 example: 1
- *               Title:
+ *               title:
  *                 type: string
- *                 example: Coding for a weekend
- *               Plan:
+ *               plan:
  *                 type: string
  *                 example: Wrinting something cool..
  *    responses:
@@ -51,15 +49,21 @@ notesRoutes.post("/:id", controllers.CreateNote)
 
 /**
  * @openapi
- * /notes/{id}:
- *   put:
+ * /notes/{idUser}/{id}:
+ *   patch:
  *    description: Put note by id
  *    tags:
  *     - Notes
  *    parameters:
- *     - name: id
+ *     - name: idUser
  *       in: path
  *       description: Id of user
+ *       required: true
+ *       schema:
+ *          type: string
+ *     - name: id
+ *       in: path
+ *       description: Id of note
  *       required: true
  *       schema:
  *          type: string
@@ -70,14 +74,14 @@ notesRoutes.post("/:id", controllers.CreateNote)
  *           schema:
  *            type: object
  *            properties:
- *               Id:
- *                 type: integer
- *               Pin:
- *                 type: integer
- *               Title:
- *                 type: string
- *               Plan:
- *                  type: string
+ *              pin:
+ *                description: Only accept 0 and 1 (false | true)
+ *                type: integer
+ *              title:
+ *                type: string
+ *              plan:
+ *                type: string
+ *                example: Wrinting something cool..
  *    responses:
  *     "200":
  *       description: success get note
@@ -87,11 +91,11 @@ notesRoutes.post("/:id", controllers.CreateNote)
  *       - token: []
  * 
 */
-notesRoutes.put("/:id", controllers.UpdateNote)
+notesRoutes.patch("/:idUser/:id", controllers.UpdateNote)
 
 /**
  * @openapi
- * /notes/{idUser}/{idNote}:
+ * /notes/{idUser}/{id}:
  *   delete:
  *    description: Delete notes by id
  *    tags:
@@ -103,13 +107,12 @@ notesRoutes.put("/:id", controllers.UpdateNote)
  *       required: true
  *       schema:
  *          type: string
-*     - name: id
+ *     - name: id
  *       in: path
  *       description: Id of note
  *       required: true
  *       schema:
- *          type: integer
- *          format: int64
+ *          type: string
  *    responses:
  *     "200":
  *       description: Success delete note
@@ -120,5 +123,24 @@ notesRoutes.put("/:id", controllers.UpdateNote)
  * 
 */
 notesRoutes.delete("/:idUser/:id", controllers.DeleteNote)
+
+/**
+ * @openapi
+ * /notes/all:
+ *  get:
+ *   description: Get all availables notes
+ *   tags:
+ *   - Notes
+ *   responses:
+ *    "200": 
+ *      description: Success get all available notes
+ *    "404": 
+ *      description: Notes are empty
+ *   security:
+ *     - token: []
+ *   
+*/
+notesRoutes.get("/all", controllers.GetAllnote)
+
 
 export default notesRoutes

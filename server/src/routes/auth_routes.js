@@ -23,11 +23,11 @@ const authRouter = Router()
  *                 type: string
  *               password:
  *                  type: string
- *   responses:
- *     "200":
- *        description: success create account
- *     "404":
- *        description: failed create account
+ *    responses:
+ *      "200":
+ *         description: Success create account
+ *      "404":
+ *         description: Email already being used
  *    
 */
 authRouter.post("/register", controller.Register)
@@ -53,9 +53,9 @@ authRouter.post("/register", controller.Register)
  *                  type: string
  *    responses:
  *      "200":
- *        description: success Login
+ *        description: Success Login
  *      "401":
- *        description: unauthorized
+ *        description: Unauthorized
  *    
 */
 authRouter.post("/login", controller.Login)

@@ -1,5 +1,6 @@
 import { constants} from "http2"
 import { findUserDetail } from "../models/users_models.js"
+import * as userService from "../services/users.services.js"
 
 /**
  * @param {import("express").Request} req 
@@ -20,4 +21,21 @@ export function getUserDetail(req, res){
         message:response.message,
         results:response.result
     })
+}
+
+export async function getAllUsers(req, res){
+    try{
+        const response = await userService.getAllUsers()
+        console.log(response)
+        res.status(constants.HTTP_STATUS_OK).json({
+            success:true,
+            message:response.message,
+            results:response
+        })
+    } catch(err){
+        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).json({
+            success:false,
+            message:err.message
+        })
+    }
 }

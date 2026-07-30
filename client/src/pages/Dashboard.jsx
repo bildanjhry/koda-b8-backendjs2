@@ -5,8 +5,8 @@ import { IoMdLogOut } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { useNavigate } from "react-router";
-
-import { api, apiGET, apiDELETE } from "../libs/fetch/fetch";
+import { useSelector } from "react-redux";
+import { api, apiNO_PAY } from "../libs/fetch/fetch";
 
 import ModalNotes from "../components/ModalNotes.jsx";
 
@@ -16,22 +16,23 @@ export default function Dashboard() {
 	const [showPop, setShowPop] = useState(false)
 	const [refresh, setRefresh] = useState(false)
 	const [notePin, setNotePin] = useState(0)
+	const [username, setUsername] = useState("User	")
 	const [dataNote, setDataNote] = useState({
 		title: "",
 		plan: ""
 	})
-	const id = JSON.parse(window.localStorage.getItem("session")).id || ''
-	const username = JSON.parse(window.localStorage.getItem("session")).name || ''
+	const dataSession = useSelector(state => state.session)
+	const id = dataSession.id
 	const navigate = useNavigate()
 	useEffect(() => {
-		if(!id){
+		if(!dataSession.token){
 			navigate("/login")
 		}
-	},[id])
+	},[dataSession])
 
 	useEffect(() => {
 		async function getData() {
-			const res = await apiGET(`http://localhost:8080/users/${id}`)
+			const res = await apiNO_PAY(`http://localhost:8080/users/${id}`, dataSession.token, "GET")
 			if (res.success) {
 				setData(res.results)
 				setNotes(res.results[0].notes)
@@ -44,12 +45,17 @@ export default function Dashboard() {
 	async function handleSubmit(e) {
 		e.preventDefault()
 		const data = new FormData(e.target)
-		if(notePin){
-			data.append("pin", notePin)
+		let urlPath = `http://localhost:8080/notes/${id}`, method = "POST"
+		data.append("pin", notePin)
+			
+		if(dataNote.id) {
+			data.append("id", dataNote.id)
+			urlPath = `http://localhost:8080/notes/${id}/${dataNote.id}`
+			method = 'PATCH'
 		}
-		if(dataNote.id) data.append("id", dataNote.id)
+
 		const formated = new URLSearchParams(data)
-		const res = await api(`http://localhost:8080/notes/${id}`, "POST", formated.toString())
+		const res = await api(urlPath, method, dataSession.token, formated.toString())
 		if (res.success) {
 			setRefresh(true)
 			setShowPop(false)
@@ -65,7 +71,7 @@ export default function Dashboard() {
 	}
 
 	async function handleDelete(){
-		const res = await apiDELETE(`http://localhost:8080/notes/${id}/${dataNote.id}`,"DELETE")
+		const res = await apiNO_PAY(`http://localhost:8080/notes/${id}/${dataNote.id}`, dataSession.token, "DELETE")
 		if(res.success){
 			setRefresh(true)
 			setShowPop(false)

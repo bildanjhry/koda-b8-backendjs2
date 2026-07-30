@@ -12,3 +12,5 @@ const persistReducersActionConfig = {
 const reducer = combineReducers({
     session:persistReducer(persistReducersActionConfig, session)
 })
+
+export default reducer

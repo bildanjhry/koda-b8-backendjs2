@@ -1,11 +1,15 @@
+import { Link, useNavigate } from "react-router"
+import { useDispatch } from "react-redux";
+import { userLogin } from "../../redux/reducer/session";
+
 import { api } from "../../libs/fetch/fetch";
 
-import { Link, useNavigate } from "react-router"
 import { HiOutlineMail } from "react-icons/hi";
 import { MdLockOutline } from "react-icons/md";
 
 export default function Login() {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     async function handleLogin(e) {
         e.preventDefault()
@@ -15,6 +19,7 @@ export default function Login() {
         if (res.success) {
             window.localStorage.setItem("session", JSON.stringify(res.results))
             alert(res.message)
+            dispatch(userLogin(res.results))
             navigate("/")
         }
     }

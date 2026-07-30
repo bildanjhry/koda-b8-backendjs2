@@ -5,7 +5,8 @@ import { IoMdLogOut } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { useNavigate } from "react-router";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { userLogout } from "../redux/reducer/session.js";
 import { api, apiNO_PAY } from "../libs/fetch/fetch";
 
 import ModalNotes from "../components/ModalNotes.jsx";
@@ -24,6 +25,9 @@ export default function Dashboard() {
 	const dataSession = useSelector(state => state.session)
 	const id = dataSession.id
 	const navigate = useNavigate()
+	const dispatch = useDispatch()
+
+
 	useEffect(() => {
 		if(!dataSession.token){
 			navigate("/login")
@@ -115,7 +119,7 @@ export default function Dashboard() {
 					<button 
 					type="button"
 					onClick={() => {
-						window.localStorage.removeItem("session")
+						dispatch(userLogout())
 						navigate("/login")
 					}}
 					className="cursor-pointer mt-auto w-full px-9 pb-10 bet-content 

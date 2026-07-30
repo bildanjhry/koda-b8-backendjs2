@@ -15,7 +15,7 @@ export function findUserDetail(id) {
         }
         return {
             success: true, 
-            message: "Success Login", 
+            message: "Success Get User", 
             result:found
         }
     } catch (err) {

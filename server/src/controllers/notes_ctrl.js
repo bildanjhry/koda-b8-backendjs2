@@ -1,5 +1,5 @@
 import { constants } from "http2"
-import { addNote, deleteNote } from "../models/notes_models.js"
+import { addNote, deleteNote, getNotes, patchNote } from "../models/notes_models.js"
 
 /**
  * 
@@ -33,11 +33,11 @@ export function CreateNote(req, res) {
 }
 
 export function UpdateNote(req, res) {
-    const idUser = req.params.id
-    const { id, title, pin, plan } = req.body
+    const idUser = req.params.idUser
+    const id = req.params.id
+    const { title, pin, plan } = req.body
 
-    const response = addNote(idUser, {
-        id :id,
+    const response = patchNote(idUser, id, {
         title: title,
         pin:parseInt(pin),
         plan: plan
@@ -60,7 +60,6 @@ export function UpdateNote(req, res) {
 export function DeleteNote(req, res) {
     const id_user = req.params.idUser
     const id = req.params.id
-    console.log(id_user+" - "+id)
     const response = deleteNote(id_user, id)
     if (!response.success) {
         res.status(constants.HTTP_STATUS_BAD_REQUEST).json({
@@ -75,3 +74,18 @@ export function DeleteNote(req, res) {
         results: response.result
     })
 }
+
+export function GetAllnote(req, res){   
+    const response = getNotes()
+    if(!response.success){
+        res.status(constants.HTTP_STATUS_BAD_REQUEST).json({
+            success:false,
+            message: response.message
+        })
+    }
+    res.status(constants.HTTP_STATUS_OK).json({
+        success: true,
+        message: "Success Get All Notes",
+        results: response.result
+    })
+}   

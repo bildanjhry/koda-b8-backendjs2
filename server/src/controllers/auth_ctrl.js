@@ -1,5 +1,6 @@
 import { constants } from "http2"
 import { create, findUser } from "../models/auth_models.js"
+import libJwt from "../libs/jwt.js"
 
 /**
  * 
@@ -41,9 +42,13 @@ export function Login(req, res){
         })
         return
     }
+    const token = libJwt.sign({id: responses.result.id})
     res.status(constants.HTTP_STATUS_CREATED).json({
         success:true,
         message:responses.message,
-        results:responses.result
+        results:{
+            id:responses.result.id,
+            token:token
+        }
     })
 }

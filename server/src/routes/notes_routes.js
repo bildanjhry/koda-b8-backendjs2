@@ -7,7 +7,50 @@ notesRoutes.use(authMiddleware)
 
 /**
  * @openapi
- * /notes/{id}:
+ * /notes/all:
+ *  get:
+ *   description: Get all availables notes
+ *   tags:
+ *   - Notes
+ *   responses:
+ *    "200": 
+ *      description: Success get all available notes
+ *    "404": 
+ *      description: Notes are empty
+ *   security:
+ *     - token: []
+ *   
+*/
+notesRoutes.get("/all", controllers.GetAllnotes)
+
+/**
+ * @openapi
+ * /notes/{idUser}:
+ *  get:
+ *   description: Get all user's available notes
+ *   tags:
+ *   - Notes
+ *   parameters:
+ *     - name: idUser
+ *       in: path
+ *       description: Id of user
+ *       required: true
+ *       schema:
+ *          type: string
+ *   responses:
+ *    "200": 
+ *      description: Success get all user's available notes
+ *    "404": 
+ *      description: Notes are empty
+ *   security:
+ *     - token: []
+ *   
+*/
+notesRoutes.get("/:idUser", controllers.GetUserNotes)
+
+/**
+ * @openapi
+ * /notes/{idUser}:
  *   post:
  *    tags:
  *     - Notes
@@ -45,7 +88,7 @@ notesRoutes.use(authMiddleware)
  *      - token : []
  * 
 */
-notesRoutes.post("/:id", controllers.CreateNote)
+notesRoutes.post("/:idUser", controllers.CreateNote)
 
 /**
  * @openapi
@@ -124,23 +167,6 @@ notesRoutes.patch("/:idUser/:id", controllers.UpdateNote)
 */
 notesRoutes.delete("/:idUser/:id", controllers.DeleteNote)
 
-/**
- * @openapi
- * /notes/all:
- *  get:
- *   description: Get all availables notes
- *   tags:
- *   - Notes
- *   responses:
- *    "200": 
- *      description: Success get all available notes
- *    "404": 
- *      description: Notes are empty
- *   security:
- *     - token: []
- *   
-*/
-notesRoutes.get("/all", controllers.GetAllnote)
 
 
 export default notesRoutes

@@ -1,5 +1,6 @@
 import { constants } from "http2"
 import { addNote, deleteNote, getNotes, patchNote } from "../models/notes_models.js"
+import * as notesServices from "../services/note.services.js"
 
 /**
  * 
@@ -75,17 +76,52 @@ export function DeleteNote(req, res) {
     })
 }
 
-export function GetAllnote(req, res){   
-    const response = getNotes()
-    if(!response.success){
+// export function GetAllnote(req, res){   
+//     const response = getNotes()
+//     if(!response.success){
+//         res.status(constants.HTTP_STATUS_BAD_REQUEST).json({
+//             success:false,
+//             message: response.message
+//         })
+//     }
+//     res.status(constants.HTTP_STATUS_OK).json({
+//         success: true,
+//         message: "Success Get All Notes",
+//         results: response.result
+//     })
+// }   
+
+export async function GetAllnotes(req, res){   
+    try{
+        const response = await notesServices.getAllNotes()
+        res.status(constants.HTTP_STATUS_OK).json({
+            success: true,
+            message: "Success Get All Notes",
+            results: response
+        })
+        
+    } catch(err){
         res.status(constants.HTTP_STATUS_BAD_REQUEST).json({
             success:false,
-            message: response.message
+            message: err.message
         })
     }
-    res.status(constants.HTTP_STATUS_OK).json({
-        success: true,
-        message: "Success Get All Notes",
-        results: response.result
-    })
+}
+
+export async function GetUserNotes(req, res){   
+    try{
+        const id = req.params.id
+        const response = await notesServices.getUserNotes(id)
+        res.status(constants.HTTP_STATUS_OK).json({
+            success: true,
+            message: "Success Get Notes",
+            results: response
+        })
+        
+    } catch(err){
+        res.status(constants.HTTP_STATUS_BAD_REQUEST).json({
+            success:false,
+            message: err.message
+        })
+    }
 }   

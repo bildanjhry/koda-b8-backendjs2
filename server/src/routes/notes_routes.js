@@ -55,12 +55,12 @@ notesRoutes.get("/:idUser", controllers.GetUserNotes)
  *    tags:
  *     - Notes
  *    parameters:
- *     - name: id
+ *     - name: idUser
  *       in: path
  *       description: Id of user
  *       required: true
  *       schema:
- *          type: string
+ *          type: integer
  *    requestBody:
  *      description: Create new note
  *      content:
@@ -68,9 +68,6 @@ notesRoutes.get("/:idUser", controllers.GetUserNotes)
  *           schema:
  *            type: object
  *            properties:
- *               id:
- *                 description: Optional for "PUT" data note
- *                 type: integer
  *               pin:
  *                 description: Only accept 0 and 1 (false | true)
  *                 type: integer
@@ -103,13 +100,13 @@ notesRoutes.post("/:idUser", controllers.CreateNote)
  *       description: Id of user
  *       required: true
  *       schema:
- *          type: string
+ *          type: integer
  *     - name: id
  *       in: path
  *       description: Id of note
  *       required: true
  *       schema:
- *          type: string
+ *          type: integer
  *    requestBody:
  *      description: Update note
  *      content:

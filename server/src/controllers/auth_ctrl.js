@@ -33,11 +33,8 @@ export async function Register(req, res) {
 
 export async function Login(req, res) {
     try {
-        const { name, email, password } = req.body
-        const response = await authServices.login({
-            email: email,
-            password: password
-        })
+        const form = req.body
+        const response = await authServices.login(form)
         res.status(constants.HTTP_STATUS_CREATED).json({
             success: true,
             message: "Success Login",

@@ -10,7 +10,7 @@ const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info : {
-       title: "NotesApp Backend",
+       title: "Pulse Notes Manager Backend",
        version: "1.0.0",
        description:'API Documentation for Pulse note manager web app.',
     },

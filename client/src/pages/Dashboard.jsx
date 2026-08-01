@@ -8,6 +8,7 @@ import { useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { userLogout } from "../redux/reducer/session.js";
 import { api, apiNO_PAY } from "../libs/fetch/fetch";
+import libsDate from "../libs/date/id_times.js";
 
 import ModalNotes from "../components/ModalNotes.jsx";
 
@@ -27,56 +28,78 @@ export default function Dashboard() {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
-
 	useEffect(() => {
-		if(!dataSession.token){
+		if (!dataSession.token) {
 			navigate("/login")
 		}
-	},[dataSession])
+	}, [dataSession])
 
 	useEffect(() => {
 		async function getData() {
-			const res = await apiNO_PAY(`http://localhost:8080/users/${id}`, dataSession.token, "GET")
-			if (res.success) {
+			try {
+				const res = await apiNO_PAY(`http://localhost:8080/users/${id}`, dataSession.token, "GET")
 				setData(res.results)
-				setNotes(res.results[0].notes)
+			} catch (err) {
+				console.error(err.message)
+			} finally {
 				if (refresh) setRefresh(false)
 			}
 		}
+
+		async function getNotes() {
+			try {
+				const res = await apiNO_PAY(`http://localhost:8080/notes/${id}`, dataSession.token, "GET")
+				const data = res.results
+				const pinned = data.filter((item) => item.pin === 1)
+				if(pinned.length > 0){
+					const rest = data.filter((item) => item.pin === 0)
+					setNotes([...pinned, ...rest])
+				} else {
+					setNotes(data)
+				}
+			} catch (err) {
+				console.error(err.message)
+			} finally {
+				if (refresh) setRefresh(false)
+			}
+		}
+
 		getData()
+		getNotes()
 	}, [refresh, setRefresh])
 
 	async function handleSubmit(e) {
-		e.preventDefault()
-		const data = new FormData(e.target)
-		let urlPath = `http://localhost:8080/notes/${id}`, method = "POST"
-		data.append("pin", notePin)
-			
-		if(dataNote.id) {
-			data.append("id", dataNote.id)
-			urlPath = `http://localhost:8080/notes/${id}/${dataNote.id}`
-			method = 'PATCH'
-		}
+		try {
+			e.preventDefault()
+			const data = new FormData(e.target)
+			let urlPath = `http://localhost:8080/notes/${id}`, method = "POST"
+			data.append("pin", notePin)
 
-		const formated = new URLSearchParams(data)
-		const res = await api(urlPath, method, dataSession.token, formated.toString())
-		if (res.success) {
+			if (dataNote.id) {
+				urlPath = `http://localhost:8080/notes/${id}/${dataNote.id}`
+				method = 'PATCH'
+			}
+			const formated = new URLSearchParams(data)
+			const res = await api(urlPath, method, dataSession.token, formated.toString())
 			setRefresh(true)
 			setShowPop(false)
 			setDataNote({})
 			setNotePin(0)
+
+		} catch (err) {
+			console.error(err.message)
 		}
 	}
 
 	function handleChooseCard(item) {
 		setNotePin(item.pin)
-		setDataNote({id:item.id, title: item.title, plan: item.plan, pin: item.pin })
+		setDataNote({ id: item.id, title: item.title, plan: item.plan, pin: item.pin })
 		setShowPop(true)
 	}
 
-	async function handleDelete(){
+	async function handleDelete() {
 		const res = await apiNO_PAY(`http://localhost:8080/notes/${id}/${dataNote.id}`, dataSession.token, "DELETE")
-		if(res.success){
+		if (res.success) {
 			setRefresh(true)
 			setShowPop(false)
 			setDataNote({})
@@ -86,17 +109,17 @@ export default function Dashboard() {
 	return (
 		<div className="w-screen flex relative overflow-x-hidden ">
 			{showPop &&
-				<ModalNotes 
-				handleSubmit={handleSubmit} 
-				dataNote={dataNote}
-				setNotePin={setNotePin} 
-				setShowPop={setShowPop} 
-				handleDelete={handleDelete}
+				<ModalNotes
+					handleSubmit={handleSubmit}
+					dataNote={dataNote}
+					setNotePin={setNotePin}
+					setShowPop={setShowPop}
+					handleDelete={handleDelete}
 				/>
 			}
 
-			<aside className="w-[10%] flex flex-col fixed z-index-15 left-0 border-r 
-      h-screen border-(--base)">
+			<aside
+				className="w-[10%] flex flex-col fixed z-index-15 left-0 border-r h-screen border-(--base)">
 				<header className="h-20 w-full border-b border-(--base) cent-content">
 					<div className="cent-content w-full flex-col">
 						<p className="text-3xl font-black"><span className="">p</span>ulse.</p>
@@ -111,19 +134,19 @@ export default function Dashboard() {
 								plan: ""
 							})
 						}}
-						className="w-20 gap-2 text-(--gray)/60 h-20 border-2 cent-content 
-            cursor-pointer flex-col rounded-md border-dashed border-(--gray)/40 ">
+						className="w-20 gap-2 text-(--gray)/60 h-20 
+						border-2 cent-content cursor-pointer flex-col rounded-md border-dashed border-(--gray)/40 ">
 						<FaRegStickyNote />
 						<p className="text-sm">Add</p>
 					</button>
-					<button 
-					type="button"
-					onClick={() => {
-						dispatch(userLogout())
-						navigate("/login")
-					}}
-					className="cursor-pointer mt-auto w-full px-9 pb-10 bet-content 
-          text-(--gray)/80 gap-1">
+					<button
+						type="button"
+						onClick={() => {
+							dispatch(userLogout())
+							navigate("/login")
+						}}
+						className="cursor-pointer 
+						mt-auto w-full px-9 pb-10 bet-content text-(--gray)/80 gap-1">
 						<IoMdLogOut />
 						<p>Log out</p>
 					</button>
@@ -131,8 +154,9 @@ export default function Dashboard() {
 
 			</aside>
 			<main className="w-[90%] ml-[10%] flex flex-col relative ">
-				<header className="w-[90%] left-[10%] fixed bg-white z-10 top-0 px-10 
-        bet-content h-20 border-b border-(--base)">
+				<header
+					className="w-[90%] left-[10%] fixed bg-white z-10 top-0 
+				px-10 bet-content h-20 border-b border-(--base)">
 					<form action="" className="relative">
 						<div className="absolute cent-content w-12 text-slate-600 text-xl h-full">
 							<CiSearch />
@@ -145,7 +169,7 @@ export default function Dashboard() {
 					<div className="bet-content gap-3">
 						<div className="w-10 bg-(--base) h-10 rounded-full">
 						</div>
-						<p>{username.split(" ")[0]}</p>
+						<p>{data[0]?.name.split(" ")[0]}</p>
 					</div>
 				</header>
 
@@ -156,12 +180,13 @@ export default function Dashboard() {
 							<div
 								key={item.id}
 								onClick={() => { handleChooseCard(item) }}
-								className={`h-100 ${item.pin ? 'bg-(--primary) text-(--light) hover:bg-(--primary)/90' : 'bg-(--light) hover:bg-(--gray)/20'} 
-								shadow-[0px_4px_18px_-13px_rgba(0,0,0,0.1)] 
-							cursor-pointer  rounded-xl px-4`}>
-								<header className={`bet-content h-[15%] w-full border-b ${item.pin ? 'border-(--light)/40' : 'border-(--gray)/20'}`}>
+								className={`h-100 
+								${item.pin ? 'bg-(--primary) text-(--light) hover:bg-(--primary)/90' : 'bg-(--light) hover:bg-(--gray)/20'} 
+								shadow-[0px_4px_18px_-13px_rgba(0,0,0,0.1)] cursor-pointer  rounded-xl px-4`}>
+								<header className={`bet-content h-[15%] w-full border-b 
+									${item.pin ? 'border-(--light)/40' : 'border-(--gray)/20'}`}>
 									<h6>{item.title.substring(0, 20)}</h6>
-									<div className="bet-content gap-2">
+									<div className="bet-content gap-1">
 										<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
 										<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
 										<span className="w-2.5 h-2.5 rounded-full bg-(--orange)/80"></span>
@@ -170,10 +195,11 @@ export default function Dashboard() {
 								<main className="h-[70%] py-3">
 									<p>{item.plan.substring(0, 310)}</p>
 								</main>
-								<footer className="h-[15%] bet-content border-t border-(--gray)/20 ">
+								<footer className={`h-[15%] bet-content border-t 
+									${item.pin ? 'border-(--light)/40' : 'border-(--gray)/20'}`}>
 									<div className="w-fit gap-2 bet-content">
 										<LuCalendarClock />
-										<p>{item.updated_at.split(",")[1]}</p>
+										<p>{libsDate.getTimeDateSimple(item.updated_at)}</p>
 									</div>
 								</footer>
 							</div>

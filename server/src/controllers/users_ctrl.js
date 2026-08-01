@@ -37,7 +37,7 @@ export async function getUserDetail(req, res){
     } catch(err){
         res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).json({
             success:false,
-            message:response.message
+            message:err.message
         })
     }
 }

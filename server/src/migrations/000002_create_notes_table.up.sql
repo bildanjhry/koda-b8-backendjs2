@@ -6,3 +6,5 @@ CREATE TABLE "notes" (
     "created_at" TIMESTAMP DEFAULT NOW(),
     "updated_at" TIMESTAMP DEFAULT NOW()
 );
+
+ALTER TABLE "notes" ADD COLUMN "pin" INT;

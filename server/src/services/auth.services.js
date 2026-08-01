@@ -3,11 +3,11 @@ import libJwt from "../libs/jwt.js"
 import libBcrypt from "../libs/bycript.js"
 
 export async function register(data) {
-    const hashed = await libBcrypt.hashed(data.password)
+    const hashedPass = await libBcrypt.hashed(data.password)
     const res = await AuthRepository.register({
         name:data.name,
         email:data.email,
-        password:hashed
+        password:hashedPass
     })
     return res
 }

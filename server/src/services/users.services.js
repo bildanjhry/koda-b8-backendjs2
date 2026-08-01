@@ -6,6 +6,6 @@ export async function getAllUsers() {
 }
 
 export async function getUserDetail(id) {
-    const users = await userRepository.findUserDetail(parseInt(id, 36))
+    const users = await userRepository.findUserDetail(parseInt(id))
     return users
 }

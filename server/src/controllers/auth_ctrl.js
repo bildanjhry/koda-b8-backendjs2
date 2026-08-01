@@ -1,5 +1,4 @@
 import { constants } from "http2"
-import { create, findUser } from "../models/auth_models.js"
 import * as authServices from "../services/auth.services.js"
 
 /**

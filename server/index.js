@@ -9,6 +9,8 @@ app.use(corsMiddlewares)
 app.use(routes)
 
 await connectDB()
-app.listen(8080, function(){
-    console.log("listent port 8080")
+
+const PORT = process.env.SERVER_PORT || 8080
+app.listen(PORT, function(){
+    console.log("listen to port 8080")
 })

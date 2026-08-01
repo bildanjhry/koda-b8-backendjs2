@@ -1,5 +1,4 @@
 import { constants } from "http2"
-import { addNote, deleteNote, getNotes, patchNote } from "../models/notes_models.js"
 import * as notesServices from "../services/note.services.js"
 
 /**

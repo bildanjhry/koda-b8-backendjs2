@@ -1,5 +1,4 @@
 import { constants} from "http2"
-import { findUserDetail } from "../models/users_models.js"
 import * as userService from "../services/users.services.js"
 
 /**

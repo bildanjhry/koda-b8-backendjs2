@@ -2,11 +2,12 @@ import bycript from "bcryptjs"
 
 const SALT_ROUNDS = 10
 
-function hashed(pass){
-    return bycript.hash(pass, SALT_ROUNDS)
+async function hashed(pass){
+    const hashedPass = await bycript.hash(pass, SALT_ROUNDS)
+    return hashedPass
 }
-function comparePass(pass, hash){
-    return bycript.compare(pass, hash)
+async function comparePass(pass, hash){
+    return await bycript.compare(pass, hash)
 }
 
 const libBcrypt = {hashed, comparePass}

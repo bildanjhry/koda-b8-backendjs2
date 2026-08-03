@@ -9,9 +9,8 @@ export default function Register(){
     async function handleRegister(e){
         e.preventDefault()
         const data = new FormData(e.target)
-        const formated = Object.fromEntries(data.entries())
         const newData = new URLSearchParams(data)
-        const res = await api('http://localhost:8080/auth/register',"POST", newData.toString())
+        const res = await api('http://localhost:8080/auth/register',"POST", "", newData.toString())
         if(res.success){
             alert(res.message)
             navigate("/login")

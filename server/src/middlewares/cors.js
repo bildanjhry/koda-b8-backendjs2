@@ -7,7 +7,7 @@ import { constants } from "http2"
  * @param {function()} next 
  */
 export function corsMiddlewares(req, res, next){
-    const url = 'http://localhost:5173'
+    const url = process.env.CLIENT_URL
     res.setHeader("Access-Control-Allow-Origin", url)
     res.setHeader("Access-Control-Allow-Methods", "GET, PUT, PATCH, DELETE")
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization")

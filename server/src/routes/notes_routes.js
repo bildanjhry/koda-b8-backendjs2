@@ -7,17 +7,60 @@ notesRoutes.use(authMiddleware)
 
 /**
  * @openapi
- * /notes/{id}:
- *   post:
- *    tags:
- *     - Notes
- *    parameters:
- *     - name: id
+ * /notes/all:
+ *  get:
+ *   description: Get all availables notes
+ *   tags:
+ *   - Notes
+ *   responses:
+ *    "200": 
+ *      description: Success get all available notes
+ *    "404": 
+ *      description: Notes are empty
+ *   security:
+ *     - token: []
+ *   
+*/
+notesRoutes.get("/all", controllers.GetAllnotes)
+
+/**
+ * @openapi
+ * /notes/{idUser}:
+ *  get:
+ *   description: Get all user's available notes
+ *   tags:
+ *   - Notes
+ *   parameters:
+ *     - name: idUser
  *       in: path
  *       description: Id of user
  *       required: true
  *       schema:
  *          type: string
+ *   responses:
+ *    "200": 
+ *      description: Success get all user's available notes
+ *    "404": 
+ *      description: Notes are empty
+ *   security:
+ *     - token: []
+ *   
+*/
+notesRoutes.get("/:idUser", controllers.GetUserNotes)
+
+/**
+ * @openapi
+ * /notes/{idUser}:
+ *   post:
+ *    tags:
+ *     - Notes
+ *    parameters:
+ *     - name: idUser
+ *       in: path
+ *       description: Id of user
+ *       required: true
+ *       schema:
+ *          type: integer
  *    requestBody:
  *      description: Create new note
  *      content:
@@ -25,9 +68,6 @@ notesRoutes.use(authMiddleware)
  *           schema:
  *            type: object
  *            properties:
- *               id:
- *                 description: Optional for "PUT" data note
- *                 type: integer
  *               pin:
  *                 description: Only accept 0 and 1 (false | true)
  *                 type: integer
@@ -45,7 +85,7 @@ notesRoutes.use(authMiddleware)
  *      - token : []
  * 
 */
-notesRoutes.post("/:id", controllers.CreateNote)
+notesRoutes.post("/:idUser", controllers.CreateNote)
 
 /**
  * @openapi
@@ -60,13 +100,13 @@ notesRoutes.post("/:id", controllers.CreateNote)
  *       description: Id of user
  *       required: true
  *       schema:
- *          type: string
+ *          type: integer
  *     - name: id
  *       in: path
  *       description: Id of note
  *       required: true
  *       schema:
- *          type: string
+ *          type: integer
  *    requestBody:
  *      description: Update note
  *      content:
@@ -124,23 +164,6 @@ notesRoutes.patch("/:idUser/:id", controllers.UpdateNote)
 */
 notesRoutes.delete("/:idUser/:id", controllers.DeleteNote)
 
-/**
- * @openapi
- * /notes/all:
- *  get:
- *   description: Get all availables notes
- *   tags:
- *   - Notes
- *   responses:
- *    "200": 
- *      description: Success get all available notes
- *    "404": 
- *      description: Notes are empty
- *   security:
- *     - token: []
- *   
-*/
-notesRoutes.get("/all", controllers.GetAllnote)
 
 
 export default notesRoutes

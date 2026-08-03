@@ -7,20 +7,22 @@ import libJwt from "../libs/jwt.js"
  * @param {function()} next  
  */
 export default function authMiddleware(req, res, next) {
-    if (req.method === "OPTIONS") {
-        return next();
+    try {
+        if (req.method === "OPTIONS") {
+            return next();
+        }
+        const auth = req.header("Authorization") || ""
+        if (auth.startsWith("Bearer ")) {
+            const token = auth.split(" ")[1]
+            const data = libJwt.verify(token)
+            req.data = data
+            return next()
+        }
+
+    } catch(err){
+        res.status(constants.HTTP_STATUS_UNAUTHORIZED).json({
+            success: false,
+            message: err.message
+        })
     }
-    const auth = req.header("Authorization") || ""
-    if (auth.startsWith("Bearer ")) {
-        const token = auth.split(" ")[1]
-        const data = libJwt.verify(token)
-        console.log(token)
-        console.log(data)
-        req.data = data
-        return next()
-    }
-    res.status(constants.HTTP_STATUS_UNAUTHORIZED).json({
-        success: false,
-        message: "Unauthorized"
-    })
 }

@@ -29,4 +29,21 @@ userRoutes.use(authMiddleware)
 */
 userRoutes.get("/:id", controllers.getUserDetail)
 
+/**
+ * @openapi
+ * /users:
+ *   get:
+ *    tags:
+ *     - Users
+ *    responses:
+ *     "200":
+ *       description: success get users
+ *     "404":
+ *       description: user not found
+ *    security:
+ *      - token: []
+ * 
+*/
+userRoutes.get("", controllers.getAllUsers)
+
 export default userRoutes

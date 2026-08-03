@@ -22,6 +22,7 @@ export default function Login() {
 			navigate("/")
 		} catch (err) {
 			console.error(err.message)
+			alert(err.message)
 		}
 	}
 

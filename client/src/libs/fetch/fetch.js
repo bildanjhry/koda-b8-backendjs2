@@ -10,10 +10,10 @@ export async function api(url, method, token, body) {
     headers:headers,
     body: body
   })
-  if (!res.ok) {
-    throw new Error(res.error)
-  }
   const data = await res.json()
+  if (!res.ok) {
+    throw new Error(data.message)
+  }
   return data
 
 }
@@ -25,10 +25,10 @@ export async function apiNO_PAY(url, token, method) {
       "Authorization": "Bearer " + token
     }
   })
-  if (!res.ok) {
-    throw new Error(res.error)
-  }
   const data = await res.json()
+  if (!res.ok) {
+    throw new Error(data.message)
+  }
   return data
 
 }

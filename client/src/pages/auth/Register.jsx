@@ -7,13 +7,16 @@ export default function Register(){
     const navigate = useNavigate()
 
     async function handleRegister(e){
-        e.preventDefault()
-        const data = new FormData(e.target)
-        const newData = new URLSearchParams(data)
-        const res = await api('http://localhost:8080/auth/register',"POST", "", newData.toString())
-        if(res.success){
+        try{
+            e.preventDefault()
+            const data = new FormData(e.target)
+            const newData = new URLSearchParams(data)
+            const res = await api('http://localhost:8080/auth/register',"POST", "", newData.toString())
             alert(res.message)
             navigate("/login")
+        } catch(err){
+            console.error(err.message)
+            alert(err.message)
         }
     }
 

@@ -10,12 +10,8 @@ import * as authServices from "../services/auth.services.js"
 
 export async function Register(req, res) {
     try {
-        const { name, email, password } = req.body
-        const response = await authServices.register({
-            name: name,
-            email: email,
-            password: password
-        })
+        const data = req.body
+        const response = await authServices.register(data)
         res.status(constants.HTTP_STATUS_CREATED).json({
             success: true,
             message: "Success create account",
